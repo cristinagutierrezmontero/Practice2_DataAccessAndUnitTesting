@@ -33,6 +33,14 @@ service-two microservice
 
 ## Running the application in dev mode
 
+To run ServiceOne you need to replace this lines in application.properties file (/ServiceOne/src/main/resources)
+with a mongodb instance. In my case, i used a local mongo docker container for this. 
+
+```
+quarkus.mongodb.connection-string=mongodb://localhost:27017/my-company
+quarkus.mongodb.database=my-company
+```
+
 ```shell script
 # Run service-one
 cd Practice1\ServiceOne
