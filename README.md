@@ -24,7 +24,15 @@ service-one microservice
 
 - Implement reactive asynchronous GET, POST, PUT, and DELETE requests for
 CRUD operations on the Employee entity.
-service-two microservice
+
+4. Fault Tolerance:
+- Integrate fault tolerance into one of your services using Quarkus' fault tolerance
+features.
+- Implement retry and circuit breaker mechanisms to handle failures gracefully
+5. Unit Testing:
+- Implement the required Unit testing for service-one and service-two with
+junit and rest-assured
+
 
    
 ## Technologies
@@ -82,13 +90,16 @@ Or, if you don't have GraalVM installed, you can run the native executable build
 ## Description
 1. Microservice:
     Develop Quarkus microservice named serviceTwo
-2. - Implement a REST client that consume the 4 APIs from the service-one
+2. Implement a REST client that consume the 4 APIs from the service-one
 microservice
 
 3. Fault Tolerance:
 - Integrate fault tolerance into one of your services using Quarkus' fault tolerance
 features.
 - Implement retry and circuit breaker mechanisms to handle failures gracefully.
+4. Unit Testing:
+- Implement the required Unit testing for service-one and service-two with
+junit and rest-assured
 
 ## Technologies
 - Quarkus
@@ -101,11 +112,11 @@ You can run your application in dev mode that enables live coding using:
 ```shell script
 
 # Run serviceOne
-cd Practice1\ServiceOne
+cd Practice2\ServiceOne
 ./mvnw quarkus:dev
 
 # Run serviceTwo
-cd Practice1\ServiceTwo
+cd Practice2\ServiceTwo
 ./mvnw quarkus:dev
 ```
 
@@ -122,14 +133,8 @@ Be aware that it’s not an _über-jar_ as the dependencies are copied into the 
 
 The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
 
-# Collections
+# Postman collection
 
-
-## Postman collection ServiceOne: 
-Service_one.postman_collection.json
-
-## Postman collection ServiceTwo: 
-Service_Two.postman_collection.json
-
+Practice2.postman_collection.json
 
 
