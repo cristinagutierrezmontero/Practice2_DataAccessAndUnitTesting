@@ -40,11 +40,16 @@ public class EmployeeResource {
     }
 
     @POST
+    //Retry mechanism to handle failures gracefully
+    @Retry(delay = 2000, delayUnit = ChronoUnit.MILLIS, maxRetries = 4, retryOn = {RuntimeException.class})
     public Uni<Employee> create(Employee employee) {
         return employeeRepository.persist(employee);
     }
 
     @PUT
+    // Circuit breaker mechanisms to handle failures gracefully
+    // requestVolumeThreshold = 5,failureRatio = 0.75, delay = 10000
+    @CircuitBreaker(requestVolumeThreshold = 5,failureRatio = 0.75, delay = 10000)
     @Path("/{id}")
     public Uni<Response> update(@PathParam("id") ObjectId id, Employee employee) {
         return employeeRepository.findById(id)
