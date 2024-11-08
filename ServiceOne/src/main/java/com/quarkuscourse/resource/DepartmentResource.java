@@ -13,6 +13,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 
 
@@ -20,16 +21,17 @@ import org.bson.types.ObjectId;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DepartmentResource {
-
     @Inject
     DepartmentRepository departmentRepository;
 
     @GET
     @Path("/{id}")
-    public Uni<Department> getById(@PathParam("id") ObjectId id) {
-        return departmentRepository.findById(id);
+    public Uni<Response> getById(@PathParam("id") ObjectId id) {
+        return departmentRepository.findById(id)
+                .onItem().ifNotNull().transform(e -> Response.ok(e).build())
+                .onItem().ifNull().continueWith(() -> Response.status(Response.Status.NOT_FOUND)
+                        .entity("Department not found").build());
     }
-
     @POST
     public Uni<Department> create(Department department) {
         return departmentRepository.persist(department);
@@ -37,14 +39,27 @@ public class DepartmentResource {
 
     @PUT
     @Path("/{id}")
-    public Uni<Department> update(@PathParam("id") ObjectId id, Department department) {
-        department.setId(id);
-        return departmentRepository.update(department);
+    public Uni<Response> update(@PathParam("id") ObjectId id, Department department) {
+        return departmentRepository.findById(id)
+                .onItem().ifNotNull().transformToUni(existingDepartment -> {
+                    existingDepartment.setName(department.getName());
+                    return departmentRepository.update(existingDepartment)
+                            .onItem().transform(updated -> Response.ok(updated).build());
+                })
+                .onItem().ifNull().continueWith(() -> Response.status(Response.Status.NOT_FOUND).entity("Department not found").build()
+                );
     }
 
     @DELETE
     @Path("/{id}")
-    public Uni<Void> delete(@PathParam(value = "id") ObjectId id) {
-        return departmentRepository.deleteById(id).replaceWithVoid();
+    public Uni<Response> delete(@PathParam("id") ObjectId id) {
+        return departmentRepository.findById(id)
+                .onItem().ifNotNull().transformToUni(e -> departmentRepository.delete(e)
+                        .onItem().transform(r -> Response.noContent().build())
+                )
+                .onItem().ifNull().continueWith(() ->
+                        Response.status(Response.Status.NOT_FOUND).entity("Department not found").build()
+                );
+
     }
 }
